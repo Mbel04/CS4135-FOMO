@@ -2,7 +2,13 @@ import axios from 'axios'
 import { store } from '../store'
 import { clearAuth } from '../store/authSlice'
 
-const baseURL = import.meta.env.VITE_API_URL ?? import.meta.env.VITE_API_BASE ?? ''
+function normalizeApiBase(url: string): string {
+  return url.trim().replace(/\/+$/, '')
+}
+
+const baseURL = normalizeApiBase(
+  String(import.meta.env.VITE_API_URL ?? import.meta.env.VITE_API_BASE ?? ''),
+)
 
 export const apiClient = axios.create({
   baseURL,
@@ -37,6 +43,12 @@ apiClient.interceptors.response.use(
 
 export function getErrorMessage(err: unknown): string {
   if (axios.isAxiosError(err)) {
+    if (!err.response && err.message === 'Network Error') {
+      if (import.meta.env.PROD && !baseURL) {
+        return 'Network error: VITE_API_URL was not set at build time. Add it in Render → Environment, then redeploy.'
+      }
+      return 'Network error: the browser blocked the request or could not reach the API. Confirm the request URL is your Render backend, and ask the backend team to allow this site\'s exact URL in CORS (including https and no trailing slash).'
+    }
     const data = err.response?.data as
       | { message?: string; fieldErrors?: Record<string, string> }
       | string

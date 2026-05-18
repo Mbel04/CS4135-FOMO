@@ -2,7 +2,7 @@ import axios from 'axios'
 import { store } from '../store'
 import { clearAuth } from '../store/authSlice'
 
-const baseURL = import.meta.env.VITE_API_BASE ?? ''
+const baseURL = import.meta.env.VITE_API_URL ?? import.meta.env.VITE_API_BASE ?? ''
 
 export const apiClient = axios.create({
   baseURL,

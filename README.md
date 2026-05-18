@@ -17,4 +17,4 @@ npm install
 npm run dev
 ```
 
-Point `VITE_API_BASE` at your backend if not using the Vite proxy (see `.env.example`).
+Point `VITE_API_URL` at your backend if not using the Vite proxy (see `.env.example`).
